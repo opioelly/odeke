@@ -1,7 +1,7 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <head><meta name="google-site-verification" content="3TzW19wcWZgSpqv-_x7w08P-QI8bD_q_hODy_xmAkfA" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Odeke - Amenjildo Official Site</title>
@@ -127,20 +127,54 @@ async function searchMusic(){
  const q=document.getElementById('searchInput').value;
  const r=document.getElementById('results');
  const p=document.getElementById('player');
+
  if(!q){r.innerHTML='Type something';return}
+
  r.innerHTML='Loading...';
+
  try{
-  const res=await fetch(`https://piped.video/api/v1/search?q=${q}&type=video`);
+  const res=await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(q)}&filter=videos`);
   const d=await res.json();
+
   r.innerHTML='';
-  d.items.slice(0,10).forEach(v=>{
+
+  const items = d.items || [];
+
+  if(items.length === 0){
+    r.innerHTML='No results found';
+    return;
+  }
+
+  items.slice(0,10).forEach(v=>{
+   const videoId = v.id || v.videoId;
+   const title = v.title || 'Untitled';
+   const thumb = v.thumbnail || (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '');
+   const duration = v.duration || 0;
+
    const c=document.createElement('div');
    c.className='video-card';
-   c.innerHTML=`<img src="${v.thumbnail}"><p>${v.title}</p><p>⏱ ${formatDuration(v.duration)}</p>`;
-   c.onclick=()=>p.src=`https://youtube.com/embed/${v.id}`;
+
+   c.innerHTML=`<img src="${thumb}"><p>${title}</p><p>⏱ ${formatDuration(duration)}</p>`;
+
+   c.onclick=()=>{
+     if(videoId){
+       p.src=`https://www.youtube.com/embed/${videoId}`;
+     }
+   };
+
    r.appendChild(c);
   });
- }catch{r.innerHTML='Error'}
+
+  const first = items[0];
+  const firstId = first.id || first.videoId;
+  if(firstId){
+    p.src=`https://www.youtube.com/embed/${firstId}`;
+  }
+
+ }catch(e){
+  console.log(e);
+  r.innerHTML='Error loading videos';
+ }
 }
 
 function sendMessage(){
