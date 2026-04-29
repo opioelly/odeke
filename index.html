@@ -121,67 +121,31 @@
 </section>
 
 <script>
-function formatDuration(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,'0')}
+function searchMusic(){
+  const q = document.getElementById('searchInput').value;
+  const player = document.getElementById('player');
 
-async function searchMusic(){
- const q=document.getElementById('searchInput').value;
- const r=document.getElementById('results');
- const p=document.getElementById('player');
-
- if(!q){r.innerHTML='Type something';return}
-
- r.innerHTML='Loading...';
-
- try{
-  const res=await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(q)}&filter=videos`);
-  const d=await res.json();
-
-  r.innerHTML='';
-
-  const items = d.items || [];
-
-  if(items.length === 0){
-    r.innerHTML='No results found';
+  if(!q){
+    alert('Type something to search');
     return;
   }
 
-  items.slice(0,10).forEach(v=>{
-   const videoId = v.id || v.videoId;
-   const title = v.title || 'Untitled';
-   const thumb = v.thumbnail || (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '');
-   const duration = v.duration || 0;
+  // Reliable YouTube embedded search (no external API needed)
+  const url = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}`;
 
-   const c=document.createElement('div');
-   c.className='video-card';
-
-   c.innerHTML=`<img src="${thumb}"><p>${title}</p><p>⏱ ${formatDuration(duration)}</p>`;
-
-   c.onclick=()=>{
-     if(videoId){
-       p.src=`https://www.youtube.com/embed/${videoId}`;
-     }
-   };
-
-   r.appendChild(c);
-  });
-
-  const first = items[0];
-  const firstId = first.id || first.videoId;
-  if(firstId){
-    p.src=`https://www.youtube.com/embed/${firstId}`;
-  }
-
- }catch(e){
-  console.log(e);
-  r.innerHTML='Error loading videos';
- }
+  player.src = url;
 }
 
 function sendMessage(){
  const n=document.getElementById('name').value;
  const e=document.getElementById('email').value;
  const m=document.getElementById('message').value;
- if(!n||!e||!m){alert('Fill all fields');return}
+
+ if(!n||!e||!m){
+   alert('Fill all fields');
+   return;
+ }
+
  window.location.href=`mailto:your@email.com?subject=Message from ${n}&body=${m}`;
 }
 </script>
