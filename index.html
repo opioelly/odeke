@@ -124,16 +124,25 @@
 function searchMusic(){
   const q = document.getElementById('searchInput').value;
   const player = document.getElementById('player');
+  const results = document.getElementById('results');
 
   if(!q){
     alert('Type something to search');
     return;
   }
 
-  // Reliable YouTube embedded search (no external API needed)
-  const url = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}`;
+  // Stable no-API YouTube search (works everywhere)
+  const searchUrl = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}`;
 
-  player.src = url;
+  player.src = searchUrl;
+
+  // simple UI feedback instead of broken API grid
+  results.innerHTML = `
+    <div style="padding:10px;color:#cbd5e1;">
+      Showing results for <b>${q}</b>.<br>
+      Click videos inside the player above to play.
+    </div>
+  `;
 }
 
 function sendMessage(){
