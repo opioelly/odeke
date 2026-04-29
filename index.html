@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -133,18 +131,63 @@
 <script>
 const API_KEY = "AIzaSyAqLUTZgNiGt_r2m4i9eH9TwXfp2TwQZAA";
 
-function searchMusic(){
-  const q=document.getElementById('searchInput').value;
-  const results=document.getElementById('results');
-  const player=document.getElementById('player');
+async function searchMusic(){
+  const q = document.getElementById('searchInput').value;
+  const results = document.getElementById('results');
+  const player = document.getElementById('player');
 
-  if(!q){alert('Type something');return;}
+  if(!q){
+    alert('Type something');
+    return;
+  }
 
-  // fallback ALWAYS works (no API dependency)
-  const url=`https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(q)}`;
-  player.src=url;
+  if(!API_KEY || API_KEY === "YOUR_YOUTUBE_API_KEY"){
+    alert('Please add your YouTube API key');
+    return;
+  }
 
-  results.innerHTML=`<p style="color:#cbd5e1">Playing results for: ${q}</p>`;
+  results.innerHTML = "Loading...";
+
+  try{
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=12&q=${encodeURIComponent(q)}&key=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    results.innerHTML = "";
+
+    if(!data.items){
+      results.innerHTML = "Error loading results";
+      return;
+    }
+
+    data.items.forEach(item => {
+      const videoId = item.id.videoId;
+      const title = item.snippet.title;
+      const thumb = item.snippet.thumbnails?.medium?.url;
+
+      const card = document.createElement('div');
+      card.className = 'video-card';
+
+      card.innerHTML = `
+        <img src="${thumb}">
+        <p>${title}</p>
+      `;
+
+      card.onclick = () => {
+        player.src = `https://www.youtube-nocookie.com/embed/${videoId}`;
+      };
+
+      results.appendChild(card);
+    });
+
+    if(data.items[0]){
+      player.src = `https://www.youtube-nocookie.com/embed/${data.items[0].id.videoId}`;
+    }
+
+  }catch(e){
+    console.log(e);
+    results.innerHTML = "Error fetching videos";
+  }
 }
 
 function sendMessage(){
