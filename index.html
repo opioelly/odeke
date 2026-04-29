@@ -1,65 +1,179 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="google-site-verification" content="3TzW19wcWZgSpqv-_x7w08P-QI8bD_q_hODy_xmAkfA" />
-  <title>Opio Elly Music</title>
+<html lang="en">
+<head>
+  <head><meta name="google-site-verification" content="3TzW19wcWZgSpqv-_x7w08P-QI8bD_q_hODy_xmAkfA" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Odeke - Amenjildo Official Site</title>
+  <meta name="description" content="Official website of Amenjildo featuring music, lyrics, and creative projects." />
+
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
     body {
-      font-family: Arial;
-      background: #0f0f0f;
+      background: url('concert-bg.jpg') no-repeat center center/cover;
+      color: #e2e8f0;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: -1;
+    }
+    header { background: linear-gradient(90deg, #1e3a8a, #0f172a); padding: 20px; text-align: center; }
+    header h1 { font-size: 2.2rem; }
+    nav { margin-top: 10px; }
+    nav a { color: #93c5fd; margin: 0 10px; text-decoration: none; font-weight: bold; }
+    nav a:hover { color: white; }
+    .hero { padding: 60px 20px; text-align: center; }
+    .hero h2 { font-size: 2rem; margin-bottom: 10px; }
+    .hero p { max-width: 600px; margin: auto; color: #cbd5e1; }
+    .btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border-radius: 5px; text-decoration: none; border: none; cursor: pointer; }
+    .section { padding: 40px 20px; max-width: 1000px; margin: auto; }
+    .card { background: #1e293b; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+    .audio-player { margin-top: 15px; width: 100%; }
+    audio { width: 100%; margin-top: 10px; }
+
+    #player { width: 100%; height: 400px; border: none; border-radius: 10px; margin-top: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 15px; }
+    .video-card { background: #0b1220; border-radius: 10px; overflow: hidden; cursor: pointer; }
+    .video-card img { width: 100%; }
+    .video-card p { padding: 8px; font-size: 0.9rem; color: #cbd5e1; }
+
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25D366;
       color: white;
-      text-align: center;
-      margin: 0;
-    }
-    header {
-      padding: 40px;
-      background: #1db954;
-    }
-    section {
-      padding: 40px;
-    }
-    audio {
-      margin-top: 20px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #1db954;
-      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
       text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
     }
+
+    .contact-form input, .contact-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    footer { text-align: center; padding: 20px; background: #0b1220; color: #94a3b8; margin-top: 40px; }
   </style>
 </head>
-
 <body>
 
 <header>
-  <h1>Opio Elly 🎶</h1>
-  <p>Acoustic • Hip-Hop • Worship</p>
+  <h1>Odeke</h1>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#music">Music</a>
+    <a href="#search">Search</a>
+    <a href="#contact">Contact</a>
+  </nav>
 </header>
 
-<section>
-  <h2>My Music</h2>
-  <p>Listen to my latest song:</p>
-
-  <audio controls>
-    <source src="song.mp3" type="audio/mpeg">
-  </audio>
+<section class="hero" id="home">
+  <h2>Welcome to My Official Website</h2>
+  <p>This is the official platform of Amenjildo where music, creativity, and projects come together.</p>
+  <a class="btn" href="#music">Explore Music</a>
 </section>
 
-<section>
-  <h2>About Me</h2>
-  <p>
-    I’m an artist sharing real stories through music.
-    Inspired by life, love, and faith.
-  </p>
+<section class="section" id="about">
+  <div class="card">
+    <h2>About Me</h2>
+    <p>I am Amenjildo, a creative artist sharing music and digital projects with the world.</p>
+  </div>
 </section>
 
-<section>
-  <h2>Contact</h2>
-  <p>Email: youremail@gmail.com</p>
+<section class="section" id="music">
+  <div class="card">
+    <h2>Music</h2>
+    <audio controls>
+      <source src="your-song.mp3" type="audio/mpeg">
+    </audio>
+    <a class="btn" href="your-song.mp3" download>Download Song</a>
+  </div>
 </section>
+
+<section class="section" id="search">
+  <div class="card">
+    <h2>Search Music</h2>
+    <input type="text" id="searchInput" placeholder="Search songs...">
+    <button class="btn" onclick="searchMusic()">Search</button>
+
+    <iframe id="player"></iframe>
+    <div id="results" class="grid"></div>
+  </div>
+</section>
+
+<script>
+function formatDuration(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,'0')}
+
+async function searchMusic(){
+ const q=document.getElementById('searchInput').value;
+ const r=document.getElementById('results');
+ const p=document.getElementById('player');
+ if(!q){r.innerHTML='Type something';return}
+ r.innerHTML='Loading...';
+ try{
+  const res=await fetch(`https://piped.video/api/v1/search?q=${q}&type=video`);
+  const d=await res.json();
+  r.innerHTML='';
+  d.items.slice(0,10).forEach(v=>{
+   const c=document.createElement('div');
+   c.className='video-card';
+   c.innerHTML=`<img src="${v.thumbnail}"><p>${v.title}</p><p>⏱ ${formatDuration(v.duration)}</p>`;
+   c.onclick=()=>p.src=`https://youtube.com/embed/${v.id}`;
+   r.appendChild(c);
+  });
+ }catch{r.innerHTML='Error'}
+}
+
+function sendMessage(){
+ const n=document.getElementById('name').value;
+ const e=document.getElementById('email').value;
+ const m=document.getElementById('message').value;
+ if(!n||!e||!m){alert('Fill all fields');return}
+ window.location.href=`mailto:your@email.com?subject=Message from ${n}&body=${m}`;
+}
+</script>
+
+<section class="section" id="contact">
+  <div class="card">
+    <h2>Contact</h2>
+
+    <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
+
+    <a class="btn" href="https://wa.me/256700000000" target="_blank">WhatsApp</a>
+
+    <div class="contact-form">
+      <input id="name" placeholder="Name">
+      <input id="email" placeholder="Email">
+      <textarea id="message" placeholder="Message"></textarea>
+      <button class="btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Odeke | Amenjildo</p>
+</footer>
+
+<a href="https://wa.me/256700000000" class="whatsapp-float">💬</a>
 
 </body>
 </html>
