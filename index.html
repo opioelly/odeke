@@ -61,64 +61,86 @@
   <div id="results" class="grid"></div>
 
 </div>
-
-<script>
+  <script>
 const API_KEY = "YOUR_YOUTUBE_API_KEY";
 
-async function searchVideos(){
-  const q = document.getElementById('searchInput').value;
-  const results = document.getElementById('results');
-  const player = document.getElementById('player');
+let nextPageToken = "";
+let currentQuery = "";
+let loading = false;
 
-  if(!q){
-    alert("Type something");
-    return;
+const results = document.getElementById('results');
+const player = document.getElementById('player');
+
+/* SEARCH */
+async function searchVideos(reset = true){
+  const q = document.getElementById('searchInput').value;
+
+  if(!q) return alert("Type something");
+
+  if(reset){
+    results.innerHTML = "";
+    nextPageToken = "";
+    currentQuery = q;
   }
 
-  results.innerHTML = "Loading...";
+  loading = true;
+
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(currentQuery)}&pageToken=${nextPageToken}&key=${API_KEY}`;
 
   try{
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=15&q=${encodeURIComponent(q)}&key=${API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
 
-    results.innerHTML = "";
+    nextPageToken = data.nextPageToken || "";
 
-    if(!data.items){
-      results.innerHTML = "No results found";
-      return;
-    }
+    renderVideos(data.items);
 
-    data.items.forEach(item=>{
-      const videoId = item.id.videoId;
-
-      const div = document.createElement("div");
-      div.className = "video-card";
-
-      div.innerHTML = `
-        <img src="${item.snippet.thumbnails.medium.url}">
-        <p>${item.snippet.title}</p>
-      `;
-
-      div.onclick = () => {
-        player.src = `https://www.youtube-nocookie.com/embed/${videoId}`;
-      };
-
-      results.appendChild(div);
-    });
-
-    // autoplay first video
-    if(data.items[0]){
-      player.src = `https://www.youtube-nocookie.com/embed/${data.items[0].id.videoId}`;
+    // autoplay first only on first load
+    if(reset && data.items[0]){
+      playVideo(data.items[0].id.videoId);
     }
 
   }catch(err){
     console.log(err);
     results.innerHTML = "Error loading videos";
   }
-}
-</script>
 
+  loading = false;
+}
+
+/* RENDER */
+function renderVideos(items){
+  items.forEach(item=>{
+    const videoId = item.id.videoId;
+    if(!videoId) return;
+
+    const div = document.createElement("div");
+    div.className = "video-card";
+
+    div.innerHTML = `
+      <img src="${item.snippet.thumbnails.medium.url}">
+      <p>${item.snippet.title}</p>
+    `;
+
+    div.onclick = () => playVideo(videoId);
+
+    results.appendChild(div);
+  });
+}
+
+/* PLAY */
+function playVideo(id){
+  player.src = `https://www.youtube-nocookie.com/embed/${id}`;
+}
+
+/* INFINITE SCROLL */
+window.addEventListener("scroll", ()=>{
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+
+  if(nearBottom && !loading && nextPageToken){
+    searchVideos(false);
+  }
+});
+</script>
 </body>
 </html>
-🔥 What you now have
