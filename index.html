@@ -4,33 +4,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Search Tool</title>
+<title>ODEKE AMENJILDO MUSIC SITE</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#0f172a;
+  background:#0b1220;
   color:white;
 }
 
-/* TOP BAR */
-.topbar{
+/* HERO */
+.hero{
+  text-align:center;
+  padding:60px 20px;
+  background:linear-gradient(135deg,#0f172a,#020617);
+}
+
+.hero h1{
+  font-size:32px;
+  margin-bottom:10px;
+  color:#38bdf8;
+  letter-spacing:2px;
+}
+
+.hero p{
+  color:#94a3b8;
+  max-width:500px;
+  margin:0 auto 20px auto;
+}
+
+.hero button{
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  background:#38bdf8;
+  color:#020617;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.hero button:hover{
+  transform:scale(1.05);
+}
+
+/* HEADER */
+.header{
   display:flex;
   gap:10px;
   padding:15px;
   background:#020617;
+  align-items:center;
   position:sticky;
   top:0;
 }
 
-.topbar h2{
+.header h2{
   margin:0;
+  font-size:16px;
   color:#38bdf8;
-  font-size:18px;
 }
 
-.topbar input{
+.header input{
   flex:1;
   padding:10px;
   border:none;
@@ -39,7 +75,7 @@ body{
   color:white;
 }
 
-.topbar button{
+.header button{
   padding:10px 15px;
   border:none;
   border-radius:6px;
@@ -50,7 +86,7 @@ body{
 }
 
 /* LAYOUT */
-.layout{
+.container{
   display:grid;
   grid-template-columns:2fr 1fr;
   gap:15px;
@@ -66,8 +102,8 @@ iframe{
   background:black;
 }
 
-/* RESULTS */
-.grid{
+/* LIST */
+.list{
   display:flex;
   flex-direction:column;
   gap:10px;
@@ -75,7 +111,7 @@ iframe{
   overflow-y:auto;
 }
 
-.video-card{
+.card{
   display:flex;
   gap:10px;
   background:#1e293b;
@@ -85,16 +121,16 @@ iframe{
   transition:0.2s;
 }
 
-.video-card:hover{
+.card:hover{
   background:#334155;
 }
 
-.video-card img{
+.card img{
   width:120px;
   border-radius:6px;
 }
 
-.video-card p{
+.card p{
   font-size:13px;
   margin:0;
 }
@@ -103,102 +139,77 @@ iframe{
 
 <body>
 
-<div class="topbar">
-  <h2>▶ Video Search</h2>
-  <input id="searchInput" placeholder="Search videos...">
-  <button onclick="searchVideos()">Search</button>
+<!-- HERO SECTION -->
+<div class="hero">
+  <h1>ODEKE AMENJILDO</h1>
+  <p>Your personal music discovery platform — search, play, and enjoy music instantly.</p>
+  <button onclick="document.getElementById('searchInput').focus()">
+    Start Listening
+  </button>
 </div>
 
-<div class="layout">
+<!-- HEADER -->
+<div class="header">
+  <h2>🎵 ODEKE MUSIC SITE</h2>
+  <input id="searchInput" placeholder="Search music...">
+  <button onclick="searchMusic()">Search</button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
   <iframe id="player"></iframe>
-  <div id="results" class="grid"></div>
+  <div id="results" class="list"></div>
 </div>
 
 <script>
 const API_KEY = "YOUR_YOUTUBE_API_KEY";
 
-let nextPageToken = "";
-let currentQuery = "";
-let loading = false;
-
-const results = document.getElementById("results");
-const player = document.getElementById("player");
-
-/* SEARCH */
-async function searchVideos(reset = true){
+/* SEARCH MUSIC */
+async function searchMusic(){
 
   const q = document.getElementById("searchInput").value;
+  const results = document.getElementById("results");
+  const player = document.getElementById("player");
 
-  if(!q && reset) return alert("Type something");
+  if(!q) return alert("Type a song name");
 
-  if(reset){
-    results.innerHTML = "";
-    nextPageToken = "";
-    currentQuery = q;
-  }
-
-  loading = true;
+  results.innerHTML = "Loading...";
 
   try{
-
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(currentQuery)}&pageToken=${nextPageToken}&key=${API_KEY}`;
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(q)} music&key=${API_KEY}`;
 
     const res = await fetch(url);
     const data = await res.json();
 
-    nextPageToken = data.nextPageToken || "";
+    results.innerHTML = "";
 
-    if(data.items){
-      renderVideos(data.items);
-    }
+    data.items.forEach(item=>{
+      const videoId = item.id.videoId;
 
-    if(reset && data.items && data.items[0]){
-      playVideo(data.items[0].id.videoId);
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <img src="${item.snippet.thumbnails.medium.url}">
+        <p>${item.snippet.title}</p>
+      `;
+
+      div.onclick = () => {
+        player.src = `https://www.youtube-nocookie.com/embed/${videoId}`;
+      };
+
+      results.appendChild(div);
+    });
+
+    if(data.items[0]){
+      player.src = `https://www.youtube-nocookie.com/embed/${data.items[0].id.videoId}`;
     }
 
   }catch(err){
     console.log(err);
-    results.innerHTML = "Error loading videos";
+    results.innerHTML = "Error loading music";
   }
-
-  loading = false;
 }
-
-/* RENDER */
-function renderVideos(items){
-  items.forEach(item=>{
-    if(!item.id.videoId) return;
-
-    const div = document.createElement("div");
-    div.className = "video-card";
-
-    div.innerHTML = `
-      <img src="${item.snippet.thumbnails.medium.url}">
-      <p>${item.snippet.title}</p>
-    `;
-
-    div.onclick = () => playVideo(item.id.videoId);
-
-    results.appendChild(div);
-  });
-}
-
-/* PLAY VIDEO */
-function playVideo(id){
-  player.src = `https://www.youtube-nocookie.com/embed/${id}`;
-}
-
-/* INFINITE SCROLL */
-window.addEventListener("scroll", ()=>{
-
-  const nearBottom =
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
-
-  if(nearBottom && !loading && nextPageToken){
-    searchVideos(false);
-  }
-});
-
 </script>
 
 </body>
